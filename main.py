@@ -41,6 +41,8 @@ def renew_lending():
 
 def mail_status():
     """Send status report by email."""
+    if not SMTP_USER:
+        return
     print("Sending status report...")
     context = ssl.create_default_context()
 
@@ -77,5 +79,4 @@ def main():
         time.sleep(1)
 
 if __name__ == "__main__":
-    # main()
-    mail_status()
+    main()

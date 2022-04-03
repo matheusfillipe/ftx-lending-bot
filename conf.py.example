@@ -1,0 +1,10 @@
+KEY=""
+SECRET=""
+
+# Just set user to NONE to disable email sending
+SMTP_USER=""
+SMTP_PASSWORD=""
+SMTP_SERVER="smtp.gmail.com"
+SMTP_PORT=587
+MAIL_SENDER=SMTP_USER
+MAIL_RECEIVER=SMTP_USER
