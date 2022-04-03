@@ -1,8 +1,8 @@
 KEY=""
 SECRET=""
 
-# Just set user to NONE to disable email sending
-SMTP_USER=""
+# If none wont send any email
+SMTP_USER=None
 SMTP_PASSWORD=""
 SMTP_SERVER="smtp.gmail.com"
 SMTP_PORT=587
