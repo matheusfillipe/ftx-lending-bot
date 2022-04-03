@@ -74,6 +74,7 @@ def main():
     schedule.every().hour.at("50:30").do(renew_lending)
     schedule.every().day.at("12:00").do(mail_status)
     schedule.every().day.at("12:00").do(log_status)
+    print("Starting...")
     while True:
         schedule.run_pending()
         time.sleep(1)
