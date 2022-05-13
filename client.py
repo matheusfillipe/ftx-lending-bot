@@ -1,9 +1,10 @@
 """Simple api wrapper for ftx.com."""
 
-import os
 import hmac
+import os
 import time
 import urllib
+import logging
 
 from requests import Request, Session
 
@@ -18,6 +19,12 @@ if KEY is None or SECRET is None:
         from conf import KEY, SECRET
     except ModuleNotFoundError:
         raise ValueError("Config file not found. Please create a conf.py file on this same dir defining KEY and SECRET or define the variables: FTX_KEY and FTX_SECRET on your env.")
+
+
+LOGLEVEL = os.environ.get('LOGLEVEL', 'INFO').upper()
+LOGLEVEL = int(LOGLEVEL) if LOGLEVEL.isdigit() else LOGLEVEL
+logging.basicConfig(level=LOGLEVEL)
+logger = logging.getLogger(__name__)
 
 
 class Client:
@@ -37,6 +44,7 @@ class Client:
             self.subaccount_name = SUBACCOUNT_NAME
         self.session = Session()
         self.session.headers.update({'Accept': 'application/json'})
+        logger.info("Client initialized.")
 
     def _fix_url(self, url: str) -> str:
         if url.startswith('https://'):
@@ -64,21 +72,27 @@ class Client:
 
     def get(self, path: str, params: dict = None) -> dict:
         """Perform a get request."""
+        logger.debug("Getting on %s with params: %s", path, params)
         url = self._fix_url(API + path)
         request = Request('GET', url, params=params)
         resp = self.session.send(self._prepared(request))
+        logger.debug(resp.json())
         return resp.json()
 
     def post(self, path: str, data: dict = None) -> dict:
         """Perform a post request."""
+        logger.debug("Posting on %s with data: %s", path, data)
         url = self._fix_url(API + path)
         request = Request('POST', url, json=data)
         resp = self.session.send(self._prepared(request))
+        logger.debug(resp.json())
         return resp.json()
 
     def delete(self, path: str, data: dict = None) -> dict:
         """Perform a delete request."""
+        logger.debug("Deleting on %s with data: %s", path, data)
         url = self._fix_url(API + path)
         request = Request('DELETE', url, json=data)
         resp = self.session.send(self._prepared(request))
+        logger.debug(resp.json())
         return resp.json()

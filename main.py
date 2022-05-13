@@ -18,11 +18,7 @@ from lending import (get_balance, last_day_proffit, lend, rate_history,
 # Lets keep a lower minimum than the actual estimative
 LOGFILE = 'status.log'
 LENDING_RATE_TRHESHOLD = 0.9
-
-try:
-    from conf import SMTP_USER, SMTP_PASSWORD, SMTP_SERVER, SMTP_PORT, MAIL_RECEIVER, MAIL_SENDER
-except ModuleNotFoundError:
-    raise ValueError("Please create a conf.py file with the following content: SMTP_USER, SMTP_PASSWORD, SMTP_SERVER, SMTP_PORT, MAIL_RECEIVER, MAIL_SENDER. Set SMTP_USER to None to disable mail sending.")
+COINS = ["USDT"]
 
 def status():
     """Print status."""
@@ -37,7 +33,9 @@ def renew_lending():
     """Renew lending."""
     print(report_status())
     print("Renewing lending...")
-    lend("USDT", get_balance('USDT'), rate_history("USDT")['estimate'] * LENDING_RATE_TRHESHOLD)
+    for coin in COINS:
+        res = lend(coin, get_balance(coin), rate_history(coin)['estimate'] * LENDING_RATE_TRHESHOLD)
+        print(f"Lend result for {coin}: {res}")
 
 def mail_status():
     """Send status report by email."""
@@ -74,7 +72,8 @@ def main():
     schedule.every().hour.at("50:30").do(renew_lending)
     schedule.every().day.at("12:00").do(mail_status)
     schedule.every().day.at("12:00").do(log_status)
-    print("Starting...")
+    print(f"Starting at {str(datetime.datetime.now())}")
+    print(report_status())
     while True:
         schedule.run_pending()
         time.sleep(1)
