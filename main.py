@@ -17,7 +17,8 @@ from lending import (get_balance, last_day_proffit, lend, rate_history,
 
 # Lets keep a lower minimum than the actual estimative
 LOGFILE = 'status.log'
-LENDING_RATE_TRHESHOLD = 0.9
+LENDING_RATE_MULTIPLIER = 0.9
+LENDING_SIZE_TRHESHOLD = 0.001
 COINS = ["USDT"]
 
 def status():
@@ -34,7 +35,7 @@ def renew_lending():
     print(report_status())
     print("Renewing lending...")
     for coin in COINS:
-        res = lend(coin, get_balance(coin), rate_history(coin)['estimate'] * LENDING_RATE_TRHESHOLD)
+        res = lend(coin, get_balance(coin) - LENDING_SIZE_TRHESHOLD, rate_history(coin)['estimate'] * LENDING_RATE_MULTIPLIER)
         print(f"Lend result for {coin}: {res}")
 
 def mail_status():
