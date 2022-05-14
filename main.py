@@ -6,6 +6,7 @@ Schedules some tasks.
 """
 
 import datetime
+import os
 import smtplib
 import ssl
 import time
@@ -19,7 +20,23 @@ from lending import (get_balance, last_day_proffit, lend, rate_history,
 LOGFILE = 'status.log'
 LENDING_RATE_MULTIPLIER = 0.9
 LENDING_SIZE_TRHESHOLD = 0.001
-COINS = ["USDT"]
+
+# Read configuration from environment
+SMTP_USER = os.environ.get("SMTP_USER")
+SMTP_SERVER = os.environ.get("SMTP_SERVER")
+SMTP_PORT = os.environ.get("SMTP_PORT")
+SMTP_PASSWORD = os.environ.get("SMTP_PASSWORD")
+MAIL_SENDER = os.environ.get("MAIL_SENDER")
+MAIL_RECEIVER = os.environ.get("MAIL_RECEIVER")
+COINS = [coin.strip() for coin in os.environ.get("COINS", "").split(",")]
+
+if COINS == ['']:
+    COINS = ["USDT"]
+
+try:
+    from conf import COINS, SMTP_PASSWORD, SMTP_PORT, SMTP_SERVER, SMTP_USER, MAIL_RECEIVER, MAIL_SENDER
+except ImportError:
+    print("Some variables are missing on the config. Using environment instead!")
 
 def status():
     """Print status."""
@@ -71,8 +88,8 @@ def log_status():
 
 def main():
     schedule.every().hour.at("50:30").do(renew_lending)
-    schedule.every().day.at("12:00").do(mail_status)
-    schedule.every().day.at("12:00").do(log_status)
+    schedule.every().day.at("22:00").do(mail_status)
+    schedule.every().day.at("22:00").do(log_status)
     print(f"Starting at {str(datetime.datetime.now())}")
     print(report_status())
     while True:

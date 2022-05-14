@@ -1,6 +1,8 @@
 KEY=""
 SECRET=""
 
+COINS = ["USDT"]
+
 # If none wont send any email
 SMTP_USER=None
 SMTP_PASSWORD=""
